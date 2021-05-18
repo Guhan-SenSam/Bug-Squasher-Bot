@@ -3,7 +3,7 @@ import os
 from telegram import InlineKeyboardButton, InlineKeyboardMarkup, Update, ParseMode
 from telegram.ext import Updater, InlineQueryHandler, CommandHandler, CallbackContext, ConversationHandler, CallbackQueryHandler, MessageHandler, Filters
 from gdrive import GDrive
-PORT = int(os.environ.get('PORT', '8443'))
+PORT = int(os.environ.get('PORT', '443'))
 
 # Enable logging
 logging.basicConfig(
