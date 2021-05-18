@@ -293,11 +293,11 @@ class main():
         dispatcher.add_handler(CommandHandler("start", Functions.start))
         dispatcher.add_handler(InlineQueryHandler(Functions.inlinequery))
 
-        # self.updater.start_webhook(listen="0.0.0.0",
-        #               port=PORT,
-        #               url_path="1723137577:AAFxgltlC-usPMntP8iOXqqAkDzCOI1ouys",
-        #               webhook_url="https://bug-squasher-bot.herokuapp.com/" + "1723137577:AAFxgltlC-usPMntP8iOXqqAkDzCOI1ouys")
-        self.updater.start_polling()
+        self.updater.start_webhook(listen="0.0.0.0",
+                      port=PORT,
+                      url_path="1723137577:AAFxgltlC-usPMntP8iOXqqAkDzCOI1ouys",
+                      webhook_url="https://bug-squasher-bot.herokuapp.com/" + "1723137577:AAFxgltlC-usPMntP8iOXqqAkDzCOI1ouys")
+
         self.updater.idle()
 
 if __name__ == '__main__':
