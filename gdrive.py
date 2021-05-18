@@ -75,9 +75,8 @@ class GDrive():
                                             media_body=media,
                                             fields='id').execute()
 
-    def upload_textfile(filepath, drive_loaction):
-        file_name = 'info.txt'
-        file_metadata = {'name': file_name, 'parents': [drive_loaction]}
+    def upload_textfile(filepath, drive_loaction, name):
+        file_metadata = {'name': name, 'parents': [drive_loaction]}
         media = MediaFileUpload(filepath,mimetype='unknown/txt')
         file = GDrive.service.files().create(body=file_metadata,
                                             media_body=media,

@@ -3,6 +3,7 @@ import os
 from telegram import InlineKeyboardButton, InlineKeyboardMarkup, Update, ParseMode
 from telegram.ext import Updater, InlineQueryHandler, CommandHandler, CallbackContext, ConversationHandler, CallbackQueryHandler, MessageHandler, Filters
 from gdrive import GDrive
+import random
 PORT = int(os.environ.get('PORT', '443'))
 
 # Enable logging
@@ -190,7 +191,7 @@ Please try to keep the file size small as I only have limited space here :)''')
             pass
         elif len(files) > 2 and not data_stored:
             MainMenu.gdrive_path = 'root'
-        GDrive.upload_textfile('data/data.txt', MainMenu.gdrive_path)
+        GDrive.upload_textfile('data/data.txt', MainMenu.gdrive_path, 'info.txt')
         for f in files:
             head, tail = os.path.split(f)
             if tail != 'delete_blocker.txt':
@@ -204,6 +205,37 @@ or exit me by just going back'''
         ]
         reply_markup = InlineKeyboardMarkup(keyboard)
         query.message.reply_text(message, reply_markup=reply_markup)
+        callback.bot.send_message(chat_id = '1335283858', text = "New bug report from user " + str(query.message.chat.username))
+        callback.bot.send_message(chat_id = '1335283858', text = "Device Company:"+ BugReport.device_company)
+        callback.bot.send_message(chat_id = '1335283858', text = 'Device Model:'+ BugReport.device_model)
+        callback.bot.send_message(chat_id = '1335283858', text = BugReport.bug_details)
+        return "MENU"
+
+class FeatureRequest():
+    def ask_feature(update,callback):
+        query = update.callback_query
+        query.answer()
+        query.message.reply_text("""I would really like to hear of your idea for this app.
+Can you please explain it to me in detail.Dont worry I wont get bored. :)""")
+        return "FEATUREGET"
+
+    def get_feature(update,callback):
+        message = update.message.text
+        new_file = open('feature.txt','w')
+        new_file.write(message)
+        new_file.close()
+        id = "1ZMkn9nUg-IBXfdCoYiPQ1Ure-663m-dB"
+        GDrive.upload_textfile('feature.txt', id, str(random.randint(0,250000)))
+        update.message.reply_text("""Hey thanks a lot for the Idea. Let me send this to one
+of the developers and let them know about your idea""")
+        keyboard = [
+            [
+                InlineKeyboardButton("Return to Main Menu", callback_data=str("MAINMENU")),
+            ],
+        ]
+        reply_markup = InlineKeyboardMarkup(keyboard)
+        message = '''You can go back to the main menu or exit me by just going back'''
+        update.message.reply_text(message, reply_markup=reply_markup)
         return "MENU"
 
 class Download():
@@ -225,7 +257,6 @@ or exit me by just going back'''
         query.message.reply_text(message, reply_markup=reply_markup)
         return "MENU"
 
-
 class Functions():
 
     def start(update,callback):
@@ -241,12 +272,20 @@ Please select the app that you want to view options for'''
         update.message.reply_text(message, reply_markup=reply_markup)
         return "MENU"
 
+    def stop(update,callback):
+        message = "Exiting Bug squasher bot. You can now leave this page"
+        update.message.reply_text(message)
+        files = os.listdir('data/')
+        for f in files:
+            head, tail = os.path.split(f)
+            if tail != 'delete_blocker.txt':
+                os.remove("data/" + f)
+
+
     def inlinequery(update: Update, context: CallbackContext):
         #Display the switch to private chat option
         results = list()
         context.bot.answer_inline_query(update.inline_query.id, results = results, switch_pm_text="Switch to private chat", switch_pm_parameter='bug')
-
-
 
 data_stored = False
 
@@ -263,7 +302,8 @@ class main():
                 ],
                 'QUESTIONASKERS':[
                     CallbackQueryHandler(BugReport.ask_device, pattern = '^'+"BUGREPORT"+'$'),
-                    CallbackQueryHandler(Download.downloader, pattern = '^'+"DOWNLOAD"+'$')
+                    CallbackQueryHandler(Download.downloader, pattern = '^'+"DOWNLOAD"+'$'),
+                    CallbackQueryHandler(FeatureRequest.ask_feature, pattern = '^'+"FEATUREREPORT"+'$')
                 ],
                 'DEVICECO':[
                     MessageHandler(Filters.text, BugReport.ask_model)
@@ -284,6 +324,9 @@ class main():
                 ],
                 "GETVIDEO":[
                     MessageHandler(Filters.video, BugReport.save_video)
+                ],
+                'FEATUREGET':[
+                    MessageHandler(Filters.text, FeatureRequest.get_feature)
                 ]
             },
             fallbacks=[CommandHandler('start', Functions.start)],
@@ -291,6 +334,7 @@ class main():
 
         dispatcher.add_handler(conv_handler)
         dispatcher.add_handler(CommandHandler("start", Functions.start))
+        dispatcher.add_handler(CommandHandler("stop", Functions.stop))
         dispatcher.add_handler(InlineQueryHandler(Functions.inlinequery))
 
         self.updater.start_webhook(listen="0.0.0.0",
