@@ -206,6 +206,25 @@ or exit me by just going back'''
         query.message.reply_text(message, reply_markup=reply_markup)
         return "MENU"
 
+class Download():
+
+    def downloader(update,callback):
+        query = update.callback_query()
+        query.answer()
+        query.message.reply_text("Give me one second I am uploading the latest apk")
+        file="remindy-0.1-arm64-v8a-debug.apk"
+        query.message.sendDocument(chat_id=chat_id, document=open(file, 'rb'))
+        keyboard = [
+            [
+                InlineKeyboardButton("Return to Main Menu", callback_data=str("MAINMENU")),
+            ],
+        ]
+        reply_markup = InlineKeyboardMarkup(keyboard)
+        message = '''You can go back to the main menu
+or exit me by just going back'''
+        query.message.reply_text(message, reply_markup=reply_markup)
+        return "MENU"
+
 
 class Functions():
 
@@ -244,6 +263,7 @@ class main():
                 ],
                 'QUESTIONASKERS':[
                     CallbackQueryHandler(BugReport.ask_device, pattern = '^'+"BUGREPORT"+'$'),
+                    CallbackQueryHandler(Download.downloader, pattern = '^'+"DOWNLOAD"+'$')
                 ],
                 'DEVICECO':[
                     MessageHandler(Filters.text, BugReport.ask_model)
