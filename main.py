@@ -86,7 +86,7 @@ Please send only one. I will ask again if u have another pic''')
                 counter+=1
             new_pic_name = str(counter+1)
             sc = file.download('data/'+new_pic_name+".jpg")
-            if counter == 0:
+            if counter == 1:# We increase one because of the delete stopper file
                 MainMenu.gdrive_path = GDrive.get_current_dir()
             elif not data_stored:# In case if someone does fail to properly stop the bot this will dump all files in the root directory
                 MainMenu.gdrive_path = 'root'
@@ -138,7 +138,7 @@ Please try to keep the file size small as I only have limited space here :)''')
                 counter+=1
             new_vid_name = str(counter+1)
             sc = file.download('data/'+new_vid_name+".mp4")
-            if counter == 0:
+            if counter == 1:
                 MainMenu.gdrive_path = GDrive.get_current_dir()
             elif not data_stored:
                 MainMenu.gdrive_path = 'root'
@@ -184,15 +184,17 @@ Please try to keep the file size small as I only have limited space here :)''')
         new_file.writelines(lines)
         new_file.close()
         files = os.listdir('data/')
-        if len(files) == 1 and not data_stored:
+        if len(files) == 2 and not data_stored:
             MainMenu.gdrive_path  = GDrive.get_current_dir()
-        elif len(files) > 1 and data_stored:
+        elif len(files) > 2 and data_stored:
             pass
-        elif len(files) > 1 and not data_stored:
+        elif len(files) > 2 and not data_stored:
             MainMenu.gdrive_path = 'root'
         GDrive.upload_textfile('data/data.txt', MainMenu.gdrive_path)
         for f in files:
-            os.remove("data/" + f)
+            head, tail = os.path.split(f)
+            if tail != 'delete_blocker.txt':
+                os.remove("data/" + f)
         message = '''Thank you for your bug report. You can go back to the main menu
 or exit me by just going back'''
         keyboard = [
