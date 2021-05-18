@@ -209,11 +209,11 @@ or exit me by just going back'''
 class Download():
 
     def downloader(update,callback):
-        query = update.callback_query()
+        query = update.callback_query
         query.answer()
         query.message.reply_text("Give me one second I am uploading the latest apk")
         file="remindy-0.1-arm64-v8a-debug.apk"
-        query.message.sendDocument(chat_id=chat_id, document=open(file, 'rb'))
+        callback.bot.send_document(update.effective_chat.id, document=open(file, 'rb'))
         keyboard = [
             [
                 InlineKeyboardButton("Return to Main Menu", callback_data=str("MAINMENU")),
@@ -293,11 +293,11 @@ class main():
         dispatcher.add_handler(CommandHandler("start", Functions.start))
         dispatcher.add_handler(InlineQueryHandler(Functions.inlinequery))
 
-        self.updater.start_webhook(listen="0.0.0.0",
-                      port=PORT,
-                      url_path="1723137577:AAFxgltlC-usPMntP8iOXqqAkDzCOI1ouys",
-                      webhook_url="https://bug-squasher-bot.herokuapp.com/" + "1723137577:AAFxgltlC-usPMntP8iOXqqAkDzCOI1ouys")
-
+        # self.updater.start_webhook(listen="0.0.0.0",
+        #               port=PORT,
+        #               url_path="1723137577:AAFxgltlC-usPMntP8iOXqqAkDzCOI1ouys",
+        #               webhook_url="https://bug-squasher-bot.herokuapp.com/" + "1723137577:AAFxgltlC-usPMntP8iOXqqAkDzCOI1ouys")
+        self.updater.start_polling()
         self.updater.idle()
 
 if __name__ == '__main__':
