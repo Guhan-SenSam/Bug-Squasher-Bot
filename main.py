@@ -244,7 +244,7 @@ class Download():
         query = update.callback_query
         query.answer()
         query.message.reply_text("Give me one second I am uploading the latest apk")
-        file="remindy-0.1-arm64-v8a-debug.apk"
+        file="remindy-0.1.1-arm64-v8a-debug.apk"
         callback.bot.send_document(update.effective_chat.id, document=open(file, 'rb'))
         keyboard = [
             [
